@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "@/components/Navbar";
-import Bookmark from "@/components/Bookmark";
+import Bookmark, { type bookmark } from "@/components/Bookmark";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import {
@@ -11,12 +11,26 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { Metadata } from "next";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { fetchBookmaks } from "@/lib/data";
 
 export const metadata: Metadata = {
 	title: "Archived bookmarks",
 };
 
-const Archived = () => {
+const Archived = async () => {
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!session) redirect("/");
+
+	const bookmarks: bookmark[] = (await fetchBookmaks()) as bookmark[];
+
+	if (!bookmarks) return <div>Loading...</div>;
+
 	return (
 		<div className="flex h-dvh w-full flex-col overflow-y-auto pb-10">
 			<Navbar canAddBookmark={false} />
@@ -54,10 +68,9 @@ const Archived = () => {
 				</div>
 
 				<div className="grid grid-cols-3 gap-8">
-					{[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-						<Bookmark key={item} />
+					{bookmarks.map((item) => (
+						<Bookmark key={item.id} item={item} />
 					))}
-					<Bookmark />
 				</div>
 			</main>
 		</div>

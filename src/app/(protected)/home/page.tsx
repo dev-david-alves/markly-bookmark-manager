@@ -1,4 +1,3 @@
-import React from "react";
 import Navbar from "@/components/Navbar";
 import Bookmark from "@/components/Bookmark";
 import { Button } from "@/components/ui/button";
@@ -11,12 +10,40 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { Metadata } from "next";
+import { type bookmark } from "@/components/Bookmark";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 export const metadata: Metadata = {
 	title: "All bookmarks",
 };
 
-const Home = () => {
+const getBookmarks = async () => {
+	const response = await fetch("http://localhost:3000/api/bookmark", {
+		method: "get",
+	});
+
+	if (response.status == 200) {
+		const result = await response.json();
+		return result;
+	} else {
+		toast.error("Error fetching your bookmarks!");
+	}
+};
+
+const Home = async () => {
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!session) redirect("/");
+
+	const bookmarks: bookmark[] = await getBookmarks();
+
+	if (!bookmarks) return <div>Loading...</div>;
+
 	return (
 		<div className="flex h-dvh w-full flex-col overflow-y-auto pb-10">
 			<Navbar />
@@ -54,10 +81,9 @@ const Home = () => {
 				</div>
 
 				<div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-					{[0, 1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-						<Bookmark key={item} />
+					{bookmarks.map((item) => (
+						<Bookmark key={item._id} item={item} />
 					))}
-					<Bookmark />
 				</div>
 			</main>
 		</div>

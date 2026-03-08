@@ -44,16 +44,29 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import CreatableTags from "./CreatableTags";
 
-const Bookmark = () => {
+export type bookmark = {
+	_id: string;
+	title: string;
+	url: string;
+	description?: string;
+	tags?: string[];
+	isFixed: boolean;
+	isArchived: boolean;
+	viewCount: number;
+	lastVisitedDate: string;
+	createdAt: string;
+};
+
+const Bookmark = ({ item }: { item: bookmark }) => {
 	return (
 		<Card className="bg-bgSoft text-text w-full max-w-100 gap-4 py-4 shadow-lg">
 			<CardHeader>
-				<Link href="https://www.google.com" target="_blank">
+				<Link href={item.url} target="_blank">
 					<CardTitle className="hover:brightness-90">
-						Next Docs <Icon icon="majesticons:open" className="ml-2 inline size-4" />
-					</CardTitle>{" "}
+						{item.title} <Icon icon="majesticons:open" className="ml-2 inline size-4" />
+					</CardTitle>
 				</Link>
-				<CopyToClipboard />
+				<CopyToClipboard url={item.url} />
 				<CardAction>
 					<Popover>
 						<PopoverTrigger asChild>
@@ -166,39 +179,49 @@ const Bookmark = () => {
 							</AlertDialog>
 
 							<Button variant="ghost" className="w-full justify-start text-white">
-								<Icon icon="ic:baseline-pin-off" />
-								Unpin
+								<Icon icon={item.isFixed ? "lucide:pin-off" : "lucide:pin"} />
+								{item.isFixed ? "Unpin" : "Pin"}
 							</Button>
 							<Button variant="ghost" className="w-full justify-start text-white">
-								<Icon icon="lucide:archive" />
-								Archive
+								<Icon
+									icon={item.isArchived ? "lucide:unarchive" : "lucide:archive"}
+								/>
+								{item.isArchived ? "Unarchive" : "Archive"}
 							</Button>
 						</PopoverContent>
 					</Popover>
 				</CardAction>
 			</CardHeader>
 			<CardContent className="border-y py-4">
-				<p>
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere ea minus quis
-					nihil voluptatum modi laborum placeat. Alias ullam blanditiis commodi unde
-					quidem eos temporibus reprehenderit, molestiae id facere. Reiciendis.
-				</p>
+				<p>{item.description}</p>
 
-				<div className="mt-4 flex items-center gap-2">
-					<Badge className="bg-primarySoft/60 rounded-xs">Practice</Badge>
-					<Badge className="bg-primarySoft/60 rounded-xs">Learning</Badge>
-					<Badge className="bg-primarySoft/60 rounded-xs">Community</Badge>
-				</div>
+				{item.tags && (
+					<div className="mt-4 flex items-center gap-2">
+						{item.tags.map((tag, index) => (
+							<Badge key={index} className="bg-primarySoft/60 rounded-xs">
+								{tag}
+							</Badge>
+						))}
+					</div>
+				)}
 			</CardContent>
 			<CardFooter className="gap-4">
 				<div className="flex items-center gap-2 text-sm">
-					<Icon icon="lucide:eye" /> 47
+					<Icon icon="lucide:eye" /> {item.viewCount}
 				</div>
 				<div className="flex items-center gap-2 text-sm">
-					<Icon icon="mingcute:time-line" /> 27 Sep
+					<Icon icon="mingcute:time-line" />{" "}
+					{new Date(item.lastVisitedDate).toLocaleDateString("en-US", {
+						day: "2-digit",
+						month: "short",
+					})}
 				</div>
 				<div className="flex items-center gap-2 text-sm">
-					<Icon icon="lucide:calendar" /> 15 Jan
+					<Icon icon="lucide:calendar" />{" "}
+					{new Date(item.createdAt).toLocaleDateString("en-US", {
+						day: "2-digit",
+						month: "short",
+					})}
 				</div>
 
 				<Icon icon="gridicons:pin" className="ml-auto" />

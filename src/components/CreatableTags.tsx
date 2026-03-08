@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
 import { Icon } from "@iconify/react";
@@ -23,6 +22,8 @@ const CreatableTags = (props: { id: string; name: string }) => {
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
+			e.preventDefault();
+
 			if (!value) {
 				toast.warning("Assign a value to the tag!");
 				return;
@@ -76,7 +77,7 @@ const CreatableTags = (props: { id: string; name: string }) => {
 
 				<Combobox items={tags}>
 					<ComboboxInput
-						placeholder="Tag..."
+						placeholder="Math..."
 						value={value}
 						onChange={(e) => setValue(e.target.value)}
 						onKeyDown={handleKeyDown}
@@ -98,6 +99,8 @@ const CreatableTags = (props: { id: string; name: string }) => {
 						</ComboboxList>
 					</ComboboxContent>
 				</Combobox>
+
+				<input type="hidden" name={props.name} value={JSON.stringify(tags)} />
 			</div>
 			<span className="mt-2 self-end">
 				{tags.length} of {MAX_TAGS}
