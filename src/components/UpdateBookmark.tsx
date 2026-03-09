@@ -20,8 +20,9 @@ import CreatableTags from "./CreatableTags";
 import { useRouter } from "next/navigation";
 import { createBookmarkSchema } from "@/lib/schemas";
 import { toast } from "sonner";
+import { bookmark } from "./Bookmark";
 
-const CreateBookmark = () => {
+const UpdateBookmark = ({ item, children }: { item: bookmark; children: React.ReactNode }) => {
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
 	const [errors, setErrors] = useState<Record<string, string>>({
@@ -30,15 +31,18 @@ const CreateBookmark = () => {
 		description: "",
 		tags: "",
 	});
+	const [url, setUrl] = useState(item.url || "");
+	const [title, setTitle] = useState(item.title || "");
+	const [description, setDescription] = useState(item.description || "");
 
-	const handleCreateBookmark = async (e: React.FormEvent<HTMLFormElement>) => {
+	const handleUpdateBookmark = async (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		const formData = new FormData(e.currentTarget);
 		const data = Object.fromEntries(formData);
-		const tags = JSON.parse(data.tags as string);
+		const newTags = JSON.parse(data.tags as string);
 
-		const result = createBookmarkSchema.safeParse({ ...data, tags });
+		const result = createBookmarkSchema.safeParse({ ...data, tags: newTags });
 
 		if (!result.success) {
 			setErrors({
@@ -61,21 +65,22 @@ const CreateBookmark = () => {
 		});
 
 		const response = await fetch("http://localhost:3000/api/bookmark", {
-			method: "POST",
+			method: "PUT",
 			body: JSON.stringify({
+				_id: item._id,
 				...data,
-				tags,
+				tags: newTags,
 			}),
 		});
 
 		await response.json();
 
-		if (response.status == 201) {
+		if (response.status == 200) {
 			setOpen(false);
-			toast.success("Bookmark created successfully!");
+			toast.success("Bookmark updated successfully!");
 			router.refresh();
 		} else {
-			toast.error("Error creating bookmark!");
+			toast.error("Error updating bookmark!");
 		}
 	};
 
@@ -90,28 +95,36 @@ const CreateBookmark = () => {
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<Button size="lg">
-					<Icon icon="lucide:plus" /> Add Bookmark
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="bg-bgSoft sm:max-w-lg">
-				<form onSubmit={handleCreateBookmark}>
+				<form onSubmit={handleUpdateBookmark}>
 					<DialogHeader>
-						<DialogTitle>Add new bookmark</DialogTitle>
+						<DialogTitle>Edit bookmark</DialogTitle>
 						<DialogDescription className="text-muted/60 mb-4 text-sm">
-							Add bookmark informations.
+							Edit bookmark informations.
 						</DialogDescription>
 					</DialogHeader>
 					<FieldGroup className="gap-y-4">
 						<Field>
 							<Label htmlFor="url">URL *</Label>
-							<Input id="url" name="url" placeholder="https://example.com..." />
+							<Input
+								id="url"
+								name="url"
+								placeholder="https://example.com..."
+								value={url}
+								onChange={(e) => setUrl(e.target.value)}
+							/>
 							{errors.url && <p className="text-sm text-red-500">{errors.url}</p>}
 						</Field>
 						<Field>
 							<Label htmlFor="title">Title *</Label>
-							<Input id="title" name="title" placeholder="Example title..." />
+							<Input
+								id="title"
+								name="title"
+								placeholder="Example title..."
+								value={title}
+								onChange={(e) => setTitle(e.target.value)}
+							/>
 							{errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
 						</Field>
 						<Field>
@@ -120,6 +133,8 @@ const CreateBookmark = () => {
 								id="description"
 								name="description"
 								placeholder="Example description..."
+								value={description}
+								onChange={(e) => setDescription(e.target.value)}
 							/>
 							{errors.description && (
 								<p className="text-sm text-red-500">{errors.description}</p>
@@ -127,7 +142,7 @@ const CreateBookmark = () => {
 						</Field>
 						<Field>
 							<Label htmlFor="tags">Tags (Press enter to add)</Label>
-							<CreatableTags id="tags" name="tags" />
+							<CreatableTags id="tags" name="tags" bookmarkId={item._id} />
 							{errors.tags && <p className="text-sm text-red-500">{errors.tags}</p>}
 						</Field>
 					</FieldGroup>
@@ -145,4 +160,4 @@ const CreateBookmark = () => {
 	);
 };
 
-export default CreateBookmark;
+export default UpdateBookmark;

@@ -1,21 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
 import { Icon } from "@iconify/react";
 import { Button } from "./ui/button";
-import {
-	Combobox,
-	ComboboxContent,
-	ComboboxEmpty,
-	ComboboxInput,
-	ComboboxItem,
-	ComboboxList,
-} from "@/components/ui/combobox";
 import { toast } from "sonner";
+import { Input } from "./ui/input";
 
-const CreatableTags = (props: { id: string; name: string }) => {
+const CreatableTags = ({
+	id,
+	name,
+	bookmarkId,
+}: {
+	id: string;
+	name: string;
+	bookmarkId?: string;
+}) => {
 	const [value, setValue] = useState("");
 	const [tags, setTags] = useState<string[]>([]);
 	const MAX_TAGS = 10;
@@ -50,6 +51,17 @@ const CreatableTags = (props: { id: string; name: string }) => {
 		setTags(copyTags);
 	};
 
+	useEffect(() => {
+		if (bookmarkId) {
+			const fetchTags = async () => {
+				const response = await fetch(`http://localhost:3000/api/bookmark?id=${bookmarkId}`);
+				const data = await response.json();
+				setTags(data.tags);
+			};
+			fetchTags();
+		}
+	}, [bookmarkId]);
+
 	return (
 		<div className="flex w-full flex-col">
 			<div
@@ -65,6 +77,7 @@ const CreatableTags = (props: { id: string; name: string }) => {
 						>
 							{item}{" "}
 							<Button
+								type="button"
 								size="xs"
 								className="bg-transparent hover:text-neutral-200"
 								onClick={() => handleDeleteTag(index)}
@@ -75,32 +88,15 @@ const CreatableTags = (props: { id: string; name: string }) => {
 					);
 				})}
 
-				<Combobox items={tags}>
-					<ComboboxInput
-						placeholder="Math..."
-						value={value}
-						onChange={(e) => setValue(e.target.value)}
-						onKeyDown={handleKeyDown}
-						className="w-full"
-						{...props}
-					/>
-					<ComboboxContent className="bg-bg">
-						<ComboboxEmpty>No tags found, press enter to add this value.</ComboboxEmpty>
-						<ComboboxList>
-							{(item) => (
-								<ComboboxItem
-									key={item}
-									value={item}
-									className="text-text capitalize"
-								>
-									{item}
-								</ComboboxItem>
-							)}
-						</ComboboxList>
-					</ComboboxContent>
-				</Combobox>
+				<Input
+					placeholder="Programming..."
+					className="w-full"
+					value={value}
+					onChange={(e) => setValue(e.target.value)}
+					onKeyDown={handleKeyDown}
+				/>
 
-				<input type="hidden" name={props.name} value={JSON.stringify(tags)} />
+				<input type="hidden" id={id} name={name} value={JSON.stringify(tags)} />
 			</div>
 			<span className="mt-2 self-end">
 				{tags.length} of {MAX_TAGS}

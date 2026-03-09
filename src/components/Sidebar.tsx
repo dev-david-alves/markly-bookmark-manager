@@ -10,6 +10,8 @@ import { Badge } from "./ui/badge";
 import { Label } from "./ui/label";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import { toast } from "sonner";
+import { bookmark } from "./Bookmark";
 
 type Tag = {
 	id: number;
@@ -18,36 +20,47 @@ type Tag = {
 	isChecked: boolean;
 };
 
+const getTags = async () => {
+	const response = await fetch("http://localhost:3000/api/bookmark", {
+		method: "get",
+	});
+
+	let groupedTags: Tag[] = [];
+	if (response.status == 200) {
+		const result = await response.json();
+		result.forEach((item: bookmark) => {
+			if (item.tags) {
+				item.tags.map((tag: string) => {
+					const tagIndex = groupedTags.findIndex(
+						(gTag) => gTag.name == tag.toLowerCase()
+					);
+					if (tagIndex == -1) {
+						groupedTags.push({
+							id: groupedTags.length,
+							name: tag.toLowerCase(),
+							count: 1,
+							isChecked: false,
+						});
+					} else {
+						groupedTags[tagIndex].count += 1;
+					}
+				});
+			}
+		});
+	} else {
+		toast.error("Error fetching tags!");
+	}
+
+	groupedTags.sort((a, b) => b.count - a.count);
+	return groupedTags;
+};
+
 const Sidebar = () => {
-	const pathname = usePathname();
-	const router = useRouter();
 	const searchParams = useSearchParams();
-	const [tags, setTags] = useState<Tag[]>([
-		{
-			id: 0,
-			name: "AI",
-			count: 5,
-			isChecked: false,
-		},
-		{
-			id: 1,
-			name: "Hobbies",
-			count: 4,
-			isChecked: false,
-		},
-		{
-			id: 2,
-			name: "Community",
-			count: 3,
-			isChecked: false,
-		},
-		{
-			id: 3,
-			name: "Programming",
-			count: 2,
-			isChecked: false,
-		},
-	]);
+	const pathname = usePathname();
+	const params = new URLSearchParams(searchParams);
+	const { replace } = useRouter();
+	const [tags, setTags] = useState<Tag[]>([]);
 
 	const handleCheckTag = (id: number) => {
 		setTags((prev) =>
@@ -59,18 +72,30 @@ const Sidebar = () => {
 		setTags((prev) => prev.map((tag) => ({ ...tag, isChecked: false })));
 	};
 
-	// useEffect(() => {
-	// 	let checkedTags = tags.filter((tag) => tag.isChecked);
-	// 	const params = new URLSearchParams(searchParams.toString());
+	useEffect(() => {
+		const getGroupedTags = async () => {
+			const gTags = await getTags();
+			setTags(gTags);
+		};
 
-	// 	if (checkedTags.length == 0) {
-	// 		params.delete("tags");
-	// 		router.push(`?${params.toString()}`);
-	// 	} else {
-	// 		params.set("tags", checkedTags.map((tag) => tag.name.toLowerCase()).join("-"));
-	// 		router.push(`?${params.toString()}`);
-	// 	}
-	// }, [tags]);
+		getGroupedTags();
+	}, []);
+
+	useEffect(() => {
+		let checkedTags = tags.filter((tag) => tag.isChecked);
+
+		if (checkedTags.length == 0) {
+			params.delete("tags");
+			replace(`${pathname}?${params.toString()}`);
+		} else {
+			params.set("tags", checkedTags.map((tag) => tag.name.toLowerCase()).join("-"));
+			replace(`${pathname}?${params.toString()}`);
+		}
+	}, [tags]);
+
+	useEffect(() => {
+		handleResetTags();
+	}, [pathname]);
 
 	return (
 		<div className="bg-bgSoft custom-scroll border-muted/30 h-dvh w-100 overflow-y-auto border-r px-4 py-6">
@@ -115,21 +140,27 @@ const Sidebar = () => {
 					)}
 				</div>
 
-				<ul className="flex flex-col gap-2">
-					{tags.map((tag) => (
-						<li key={tag.id} className="flex items-center justify-between">
-							<Label className="w-full cursor-pointer">
-								<Checkbox
-									className="size-4"
-									checked={tag.isChecked}
-									onCheckedChange={() => handleCheckTag(tag.id)}
-								/>{" "}
-								{tag.name}{" "}
-							</Label>
-							<Badge className="size-6">{tag.count}</Badge>
-						</li>
-					))}
-				</ul>
+				{tags.length == 0 ? (
+					<div className="flex h-full w-full justify-center">
+						<p className="text-muted/30 text-sm select-none">No tags!</p>
+					</div>
+				) : (
+					<ul className="flex flex-col gap-2">
+						{tags.map((tag) => (
+							<li key={tag.id} className="flex items-center justify-between">
+								<Label className="w-full cursor-pointer">
+									<Checkbox
+										className="size-4"
+										checked={tag.isChecked}
+										onCheckedChange={() => handleCheckTag(tag.id)}
+									/>{" "}
+									{tag.name}{" "}
+								</Label>
+								<Badge className="size-6">{tag.count}</Badge>
+							</li>
+						))}
+					</ul>
+				)}
 			</div>
 		</div>
 	);

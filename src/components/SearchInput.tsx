@@ -1,28 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "use-debounce";
 import { Input } from "./ui/input";
 
 const SearchInput = () => {
-	const router = useRouter();
 	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const params = new URLSearchParams(searchParams);
+	const { replace } = useRouter();
+	const q = searchParams.get("q");
 
 	const [text, setText] = useState("");
-	const [value] = useDebounce(text, 1000);
+	const [value] = useDebounce(text, 100);
 
-	// useEffect(() => {
-	// 	const params = new URLSearchParams(searchParams.toString());
+	useEffect(() => {
+		if (value) {
+			params.set("q", value);
+		} else {
+			params.delete("q");
+		}
 
-	// 	if (value) {
-	// 		params.set("q", value);
-	// 	} else {
-	// 		params.delete("q");
-	// 	}
-
-	// 	router.push(`?${params.toString()}`, { scroll: false });
-	// }, [value, router, searchParams]);
+		replace(`${pathname}?${params.toString()}`);
+	}, [value, q]);
 
 	return (
 		<Input
