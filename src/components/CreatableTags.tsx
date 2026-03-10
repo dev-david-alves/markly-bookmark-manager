@@ -12,13 +12,15 @@ const CreatableTags = ({
 	id,
 	name,
 	bookmarkId,
+	initialValue,
 }: {
 	id: string;
 	name: string;
 	bookmarkId?: string;
+	initialValue?: string[];
 }) => {
 	const [value, setValue] = useState("");
-	const [tags, setTags] = useState<string[]>([]);
+	const [tags, setTags] = useState<string[]>(initialValue || []);
 	const MAX_TAGS = 10;
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -61,6 +63,10 @@ const CreatableTags = ({
 			fetchTags();
 		}
 	}, [bookmarkId]);
+
+	useEffect(() => {
+		setTags(initialValue || []);
+	}, [initialValue]);
 
 	return (
 		<div className="flex w-full flex-col">

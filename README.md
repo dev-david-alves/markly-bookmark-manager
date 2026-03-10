@@ -15,6 +15,5 @@
 [x] Copy bookmark URLs to the clipboard </br>
 [x] Visit bookmarked websites directly from the app </br>
 [x] Sort bookmarks by "Recently added", "Recently visited", or "Most visited" </br>
-[ ] Toggle between light and dark color themes </br>
-[ ] View the optimal layout for the interface depending on their device's screen size </br>
 [x] See hover and focus states for all interactive elements on the page </br>
+[ ] View the optimal layout for the interface depending on their device's screen size </br>

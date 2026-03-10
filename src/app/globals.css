@@ -145,24 +145,24 @@ body {
 }
 
 /* width of the scrollbar */
-.custom-scroll::-webkit-scrollbar {
+::-webkit-scrollbar {
 	width: 8px;
 	height: 8px;
 }
 
 /* track (background) */
-.custom-scroll::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
 	background: transparent;
 }
 
 /* draggable part */
-.custom-scroll::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
 	background: var(--primary);
 	border-radius: 8px;
 	cursor: pointer;
 }
 
 /* hover effect */
-.custom-scroll::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
 	background: var(--primary-soft);
 }

@@ -15,11 +15,13 @@ import DeleteBookmark from "./DeleteBookmark";
 import TogglePin from "./TogglePin";
 import ToggleArchive from "./ToggleArchive";
 import VistLink from "./VistLink";
+import Image from "next/image";
 
 export type bookmark = {
 	_id: string;
 	title: string;
 	url: string;
+	favicon?: string;
 	description?: string;
 	tags?: string[];
 	isFixed: boolean;
@@ -30,11 +32,35 @@ export type bookmark = {
 };
 
 const Bookmark = ({ item }: { item: bookmark }) => {
+	const domain = new URL(item.url).hostname;
+	const favicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+
 	return (
-		<Card className="bg-bgSoft text-text w-full max-w-100 justify-between gap-4 py-4 shadow-lg">
+		<Card className="bg-bgSoft text-text w-full max-w-100 justify-between py-4 shadow-lg">
 			<CardHeader>
-				<VistLink item={item} />
-				<CopyToClipboard url={item.url} />
+				<div className="flex gap-3">
+					{item.favicon ? (
+						<Image
+							src={favicon}
+							width={40}
+							height={40}
+							alt="Favicon"
+							className="border-muted size-10 rounded-md border object-cover"
+						/>
+					) : (
+						<Image
+							src="/bookmark.png"
+							width={5}
+							height={5}
+							alt="Markly Favicon"
+							className="border-muted aspect-square size-10 rounded-md border p-2"
+						/>
+					)}
+					<div className="flex flex-col gap-1">
+						<VistLink item={item} />
+						<CopyToClipboard url={item.url} />
+					</div>
+				</div>
 				<CardAction>
 					<Popover>
 						<PopoverTrigger asChild>
@@ -90,7 +116,7 @@ const Bookmark = ({ item }: { item: bookmark }) => {
 				)}
 			</CardContent>
 
-			<CardFooter className="gap-4">
+			<CardFooter className="gap-4 pt-3">
 				<div className="flex items-center gap-2 text-sm">
 					<Icon icon="lucide:eye" /> {item.viewCount}
 				</div>

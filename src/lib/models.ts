@@ -10,6 +10,9 @@ const bookmarkSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		favicon: {
+			type: String,
+		},
 		description: {
 			type: String,
 		},

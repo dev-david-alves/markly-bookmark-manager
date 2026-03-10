@@ -11,8 +11,10 @@
 	"dependencies": {
 		"@base-ui/react": "^1.2.0",
 		"better-auth": "^1.5.0",
+		"cheerio": "^1.2.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
+		"keyword-extractor": "^0.0.28",
 		"lucide-react": "^0.575.0",
 		"mongodb": "^7.1.0",
 		"mongoose": "^9.2.3",

@@ -3,7 +3,8 @@ import * as z from "zod";
 export const createBookmarkSchema = z.object({
 	url: z.url("Invalid URL").min(1, "URL is required"),
 	title: z.string().trim().min(1, "Title is required").max(100, "Maximum 100 characters allowed"),
-	description: z.string().trim().max(100, "Maximum 100 characters allowed").optional(),
+	description: z.string().trim().max(1000, "Maximum 1000 characters allowed").optional(),
+	favicon: z.string().optional(),
 	tags: z
 		.array(
 			z.string().trim().min(1, "Tag cannot be empty").max(20, "Maximum 20 characters allowed")
