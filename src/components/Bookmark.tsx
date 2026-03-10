@@ -36,7 +36,7 @@ const Bookmark = ({ item }: { item: bookmark }) => {
 	const favicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
 
 	return (
-		<Card className="bg-bgSoft text-text w-full max-w-100 justify-between py-4 shadow-lg">
+		<Card className="bg-bgSoft text-text w-full justify-between py-4 shadow-lg">
 			<CardHeader>
 				<div className="flex gap-3">
 					{item.favicon ? (

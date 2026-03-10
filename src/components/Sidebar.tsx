@@ -55,7 +55,7 @@ const getTags = async () => {
 	return groupedTags;
 };
 
-const Sidebar = () => {
+const Sidebar = ({ className }: { className?: string }) => {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const params = new URLSearchParams(searchParams);
@@ -98,7 +98,12 @@ const Sidebar = () => {
 	}, [pathname]);
 
 	return (
-		<div className="bg-bgSoft custom-scroll border-muted/30 h-dvh w-100 overflow-y-auto border-r px-4 py-6">
+		<div
+			className={cn(
+				"bg-bgSoft custom-scroll border-muted/30 h-dvh w-100 overflow-y-auto border-r px-4 py-6",
+				className
+			)}
+		>
 			<div className="flex items-center gap-2">
 				<div className="bg-primary w-fit rounded-lg p-2">
 					<Image src="/bookmark.png" width={24} height={24} alt="Markly" />

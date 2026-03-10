@@ -141,7 +141,8 @@ const CreateBookmark = () => {
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<Button size="lg">
-					<Icon icon="lucide:plus" /> Add Bookmark
+					<Icon icon="lucide:plus" />
+					<span className="hidden md:block">Add Bookmark</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="bg-bgSoft sm:max-w-lg">
@@ -209,7 +210,7 @@ const CreateBookmark = () => {
 								Cancel
 							</Button>
 						</DialogClose>
-						<Button type="submit">Save changes</Button>
+						<Button type="submit">Add bookmark</Button>
 					</DialogFooter>
 				</form>
 			</DialogContent>

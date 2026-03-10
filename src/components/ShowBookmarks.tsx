@@ -56,7 +56,7 @@ const ShowBookmarks = ({ bookmarks }: { bookmarks: bookmark[] }) => {
 	}
 
 	return (
-		<div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+		<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8 2xl:grid-cols-3">
 			{sortedItems.map((item) => (
 				<Bookmark key={item._id} item={item} />
 			))}

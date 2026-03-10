@@ -41,7 +41,7 @@ const Archived = async () => {
 		<div className="flex h-dvh w-full flex-col overflow-y-auto pb-10">
 			<Navbar canAddBookmark={false} />
 
-			<main className="mt-8 flex flex-col gap-8 px-8">
+			<main className="mt-8 flex flex-col gap-4 px-4 md:gap-8 md:px-6 lg:px-8">
 				<div className="flex items-center justify-between">
 					<h1 className="text-2xl font-medium">All archived bookmarks</h1>
 					<SortBookmarks />
