@@ -6,7 +6,10 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Markly",
+	title: {
+		default: "Markly",
+		template: "%s | Markly",
+	},
 	description: "A web app for managing bookmarks",
 };
 

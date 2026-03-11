@@ -27,12 +27,6 @@ const getBookmarks = async () => {
 };
 
 const Home = async () => {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) redirect("/");
-
 	const bookmarks: bookmark[] = await getBookmarks();
 
 	if (!bookmarks) return <div>Loading...</div>;
