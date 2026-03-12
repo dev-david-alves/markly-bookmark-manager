@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const bookmarkSchema = new mongoose.Schema(
 	{
+		userId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "user",
+			required: true,
+		},
 		title: {
 			type: String,
 			required: true,

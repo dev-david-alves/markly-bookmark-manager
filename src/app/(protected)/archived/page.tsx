@@ -4,10 +4,8 @@ import ShowBookmarks from "@/components/ShowBookmarks";
 
 import { type bookmark } from "@/components/Bookmark";
 import { Metadata } from "next";
-import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { toast } from "sonner";
+import LoadingBookmarks from "@/components/LoadingBookmarks";
 
 export const metadata: Metadata = {
 	title: "Archived bookmarks",
@@ -16,20 +14,21 @@ export const metadata: Metadata = {
 const getBookmarks = async () => {
 	const response = await fetch("http://localhost:3000/api/bookmark", {
 		method: "get",
+		headers: await headers(),
 	});
 
 	if (response.status == 200) {
 		const result = await response.json();
 		return result.filter((item: bookmark) => item.isArchived);
 	} else {
-		toast.error("Error fetching your bookmarks!");
+		return [];
 	}
 };
 
 const Archived = async () => {
 	const bookmarks: bookmark[] = await getBookmarks();
 
-	if (!bookmarks) return <div>Loading...</div>;
+	if (!bookmarks) return <LoadingBookmarks />;
 
 	return (
 		<div className="flex h-dvh w-full flex-col overflow-y-auto pb-10">

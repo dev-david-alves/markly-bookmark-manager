@@ -2,7 +2,6 @@
 
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";
-import { Button } from "./ui/button";
 
 const CopyToClipboard = ({ url }: { url: string }) => {
 	const handleCopy = async () => {
@@ -16,13 +15,13 @@ const CopyToClipboard = ({ url }: { url: string }) => {
 
 	return (
 		<div
-			className="group flex w-fit cursor-pointer items-center gap-2 hover:brightness-150"
+			className="flex w-full cursor-pointer items-center gap-2 hover:brightness-150"
 			onClick={handleCopy}
 		>
-			<p className="text-muted/60 pb-1 text-sm">{url}</p>
-			<Button size="xs" variant="ghost" className="not-group-hover:hidden">
-				<Icon icon="lucide:copy" />
-			</Button>
+			<p className="text-muted/60 pb-1 text-sm">
+				{url.length > 25 ? url.slice(0, 25) + "..." : url}
+			</p>
+			<Icon icon="lucide:copy" />
 		</div>
 	);
 };

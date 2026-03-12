@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Icon } from "@iconify/react";
 import { Button } from "./ui/button";
 import {
 	Dialog,
